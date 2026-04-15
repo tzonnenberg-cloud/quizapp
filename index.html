@@ -1,160 +1,190 @@
-import React, { useMemo, useState } from "react";
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Napoleon Bonaparte Quiz</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+        .quiz-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .question {
+            margin-top: 25px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .options {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            padding: 10px;
+            background: #ecf0f1;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        label:hover {
+            background: #dbe2e3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 30px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .feedback {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+            font-size: 14px;
+        }
+        .correct {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .incorrect {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        #final-score {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
 
-const questions = [
-  {
-    id: 1,
-    question: "In welk land werd Napoleon Bonaparte geboren?",
-    answers: ["frankrijk", "corsica", "frankrijk (corsica)", "corsica (frankrijk)"],
-    correctLabel: "Frankrijk / Corsica",
-    feedback:
-      "Napoleon werd geboren op Corsica. Dat eiland was kort daarvoor Frans geworden. Daarom zijn zowel ‘Corsica’ als ‘Frankrijk’ meestal goed te rekenen.",
-  },
-  {
-    id: 2,
-    question:
-      "Welke belangrijke militaire overwinning behaalde Napoleon in 1805 tegen Oostenrijk en Rusland?",
-    answers: ["slag bij austerlitz", "austerlitz"],
-    correctLabel: "Slag bij Austerlitz",
-    feedback:
-      "De Slag bij Austerlitz was een van Napoleons grootste overwinningen. Deze slag staat ook bekend als de Slag der Drie Keizers.",
-  },
-  {
-    id: 3,
-    question: "Wat was de naam van het wetboek dat Napoleon invoerde?",
-    answers: ["code napoléon", "code napoleon", "burgerlijk wetboek"],
-    correctLabel: "Code Napoléon / Burgerlijk Wetboek",
-    feedback:
-      "De Code Napoléon werd een invloedrijk wetboek in Europa. Ook ‘Burgerlijk Wetboek’ is hier een goed antwoord.",
-  },
-  {
-    id: 4,
-    question: "Naar welk eiland werd Napoleon voor het eerst verbannen?",
-    answers: ["elba"],
-    correctLabel: "Elba",
-    feedback:
-      "Napoleon werd in 1814 verbannen naar Elba. Later keerde hij nog kort terug aan de macht.",
-  },
-  {
-    id: 5,
-    question: "In welk jaar vond de Slag bij Waterloo plaats?",
-    answers: ["1815"],
-    correctLabel: "1815",
-    feedback:
-      "De Slag bij Waterloo vond plaats in 1815 en betekende Napoleons definitieve nederlaag.",
-  },
-];
-
-export default function NapoleonQuizApp() {
-  const [answers, setAnswers] = useState(() =>
-    Object.fromEntries(questions.map((q) => [q.id, ""]))
-  );
-  const [checked, setChecked] = useState(false);
-
-  const results = useMemo(() => {
-    return questions.map((q) => {
-      const raw = answers[q.id] ?? "";
-      const normalized = raw.trim().toLowerCase();
-      const correct = q.answers.includes(normalized);
-      return { ...q, userAnswer: raw, correct };
-    });
-  }, [answers]);
-
-  const score = results.filter((r) => r.correct).length;
-
-  function handleChange(id, value) {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
-  }
-
-  function handleCheck() {
-    setChecked(true);
-  }
-
-  function handleReset() {
-    setAnswers(Object.fromEntries(questions.map((q) => [q.id, ""])));
-    setChecked(false);
-  }
-
-  function getScoreText(currentScore) {
-    if (currentScore === 5) return "Uitstekend";
-    if (currentScore === 4) return "Goed";
-    if (currentScore === 3) return "Voldoende";
-    return "Nog even oefenen";
-  }
-
-  return (
-    <div className="min-h-screen bg-white p-6 md:p-10">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-sm md:p-8">
-        <h1 className="text-3xl font-bold tracking-tight">Quiz over Napoleon</h1>
-        <p className="mt-3 text-base text-slate-700">
-          Beantwoord de 5 vragen en klik daarna op <strong>Controleer antwoorden</strong>.
-          Je krijgt per vraag feedback te zien.
-        </p>
-
-        <div className="mt-8 space-y-6">
-          {results.map((result, index) => (
-            <div key={result.id} className="rounded-2xl border border-slate-200 p-5">
-              <label className="block text-base font-semibold text-slate-900">
-                {index + 1}. {result.question}
-              </label>
-
-              <input
-                type="text"
-                value={answers[result.id]}
-                onChange={(e) => handleChange(result.id, e.target.value)}
-                className="mt-3 w-full rounded-xl border border-slate-300 px-4 py-3 text-base outline-none focus:border-slate-500"
-                placeholder="Typ je antwoord hier"
-              />
-
-              {checked && (
-                <div
-                  className={`mt-4 rounded-xl p-4 text-sm leading-6 ${
-                    result.correct
-                      ? "border border-green-200 bg-green-50 text-green-900"
-                      : "border border-red-200 bg-red-50 text-red-900"
-                  }`}
-                >
-                  <p className="font-semibold">
-                    {result.correct ? "Goed antwoord" : "Niet goed"}
-                  </p>
-
-                  {!result.correct && (
-                    <p className="mt-1">
-                      <strong>Juiste antwoord:</strong> {result.correctLabel}
-                    </p>
-                  )}
-
-                  <p className="mt-1">{result.feedback}</p>
-                </div>
-              )}
-            </div>
-          ))}
+<div class="quiz-container">
+    <h1>Napoleon Quiz</h1>
+    
+    <div id="quiz-form">
+        <!-- Vraag 1 -->
+        <div class="question">1. Waar werd Napoleon Bonaparte geboren?</div>
+        <div class="options">
+            <label><input type="radio" name="q1" value="A"> Parijs</label>
+            <label><input type="radio" name="q1" value="B"> Corsica</label>
+            <label><input type="radio" name="q1" value="C"> Elba</label>
         </div>
+        <div id="feedback-q1" class="feedback"></div>
 
-        <div className="mt-8 flex flex-wrap gap-3">
-          <button
-            onClick={handleCheck}
-            className="rounded-2xl bg-slate-900 px-5 py-3 text-white transition hover:opacity-90"
-          >
-            Controleer antwoorden
-          </button>
-          <button
-            onClick={handleReset}
-            className="rounded-2xl border border-slate-300 px-5 py-3 text-slate-800 transition hover:bg-slate-50"
-          >
-            Opnieuw beginnen
-          </button>
+        <!-- Vraag 2 -->
+        <div class="question">2. Welke titel nam Napoleon aan in 1804?</div>
+        <div class="options">
+            <label><input type="radio" name="q2" value="A"> Keizer der Fransen</label>
+            <label><input type="radio" name="q2" value="B"> Koning van Frankrijk</label>
+            <label><input type="radio" name="q2" value="C"> President van de Republiek</label>
         </div>
+        <div id="feedback-q2" class="feedback"></div>
 
-        {checked && (
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-slate-50 p-5">
-            <h2 className="text-xl font-semibold">Jouw score</h2>
-            <p className="mt-2 text-base text-slate-800">
-              Je hebt <strong>{score} van de 5</strong> vragen goed.
-            </p>
-            <p className="mt-1 text-slate-700">Beoordeling: {getScoreText(score)}</p>
-          </div>
-        )}
-      </div>
+        <!-- Vraag 3 -->
+        <div class="question">3. Bij welke beroemde veldslag werd Napoleon definitief verslagen?</div>
+        <div class="options">
+            <label><input type="radio" name="q3" value="A"> De Slag bij Austerlitz</label>
+            <label><input type="radio" name="q3" value="B"> De Slag bij Borodino</label>
+            <label><input type="radio" name="q3" value="C"> De Slag bij Waterloo</label>
+        </div>
+        <div id="feedback-q3" class="feedback"></div>
+
+        <!-- Vraag 4 -->
+        <div class="question">4. Hoe heette het beroemde burgerlijk wetboek dat hij invoerde?</div>
+        <div class="options">
+            <label><input type="radio" name="q4" value="A"> Magna Carta</label>
+            <label><input type="radio" name="q4" value="B"> Code Napoléon</label>
+            <label><input type="radio" name="q4" value="C"> De Franse Grondwet</label>
+        </div>
+        <div id="feedback-q4" class="feedback"></div>
+
+        <!-- Vraag 5 -->
+        <div class="question">5. Op welk eiland stierf Napoleon in ballingschap?</div>
+        <div class="options">
+            <label><input type="radio" name="q5" value="A"> Sint-Helena</label>
+            <label><input type="radio" name="q5" value="B"> Sicilië</label>
+            <label><input type="radio" name="q5" value="C"> Madagaskar</label>
+        </div>
+        <div id="feedback-q5" class="feedback"></div>
+
+        <button onclick="checkAnswers()">Controleer Antwoorden</button>
     </div>
-  );
-}
+
+    <div id="final-score"></div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const answers = {
+            q1: { correct: "B", info: "Correct! Hij werd geboren in Ajaccio op het eiland Corsica." },
+            q2: { correct: "A", info: "Inderdaad! Hij kroonde zichzelf tot Keizer in de Notre-Dame." },
+            q3: { correct: "C", info: "Klopt! In 1815 werd hij bij Waterloo verslagen door de Britten en Pruisen." },
+            q4: { correct: "B", info: "Goed! De Code Napoléon vormt nog steeds de basis voor veel Europese rechtssystemen." },
+            q5: { correct: "A", info: "Juist. Hij stierf daar in 1821, ver weg in de Atlantische Oceaan." }
+        };
+
+        let score = 0;
+
+        for (let key in answers) {
+            const selected = document.querySelector(`input[name="${key}"]:checked`);
+            const feedbackDiv = document.getElementById(`feedback-${key}`);
+            
+            feedbackDiv.style.display = "block";
+
+            if (selected) {
+                if (selected.value === answers[key].correct) {
+                    feedbackDiv.className = "feedback correct";
+                    feedbackDiv.innerHTML = "✅ " + answers[key].info;
+                    score++;
+                } else {
+                    feedbackDiv.className = "feedback incorrect";
+                    feedbackDiv.innerHTML = "❌ Helaas, dat is fout. Het juiste antwoord was " + answers[key].correct + ".";
+                }
+            } else {
+                feedbackDiv.className = "feedback incorrect";
+                feedbackDiv.innerHTML = "⚠️ Je hebt geen antwoord gekozen.";
+            }
+        }
+
+        const scoreDiv = document.getElementById('final-score');
+        scoreDiv.innerHTML = `Je score: ${score} van de 5`;
+    }
+</script>
+
+</body>
+</html>
